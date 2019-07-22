@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"time"
 
 	"github.com/k0kubun/pp"
 )
@@ -103,6 +104,8 @@ func main() {
 }
 
 func getJobPods(namespace string, jobName string) (*podItems, error) {
+	time.Sleep(3 * time.Second)
+
 	getPodCmd := exec.Command("kubectl", "get", "pods", "-n", namespace, "--selector=job-name="+jobName, "-o", "json")
 	getPodBuf := new(bytes.Buffer)
 	getPodCmd.Stdout = getPodBuf
