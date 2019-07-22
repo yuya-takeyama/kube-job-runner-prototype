@@ -104,7 +104,7 @@ func main() {
 }
 
 func getJobPods(namespace string, jobName string) (*podItems, error) {
-	time.Sleep(10 * time.Second)
+	time.Sleep(60 * time.Second)
 
 	getPodCmd := exec.Command("kubectl", "get", "pods", "-n", namespace, "--selector=job-name="+jobName, "-o", "json")
 	getPodBuf := new(bytes.Buffer)
