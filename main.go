@@ -7,6 +7,8 @@ import (
 	"log"
 	"os"
 	"os/exec"
+
+	"github.com/k0kubun/pp"
 )
 
 type applyResult struct {
@@ -52,7 +54,7 @@ func main() {
 		panic(applyErr)
 	}
 
-	log.Println("kubectl apply result:")
+	log.Println("=== kubectl apply result:")
 	fmt.Println(applyBuf.String())
 	log.Println("---")
 
@@ -72,6 +74,10 @@ func main() {
 		if getJobPodsErr != nil {
 			panic(getJobPodsErr)
 		}
+
+		log.Println("=== getJobPods() items:")
+		pp.Println(items)
+		log.Println("---")
 
 		if items.Items[0].Status.ContainerStatuses[0].State["waiting"] == nil {
 			podName = items.Items[0].Metadata.Name
