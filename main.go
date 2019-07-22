@@ -46,7 +46,7 @@ type podItems struct {
 func main() {
 	file := os.Args[1]
 	jobNamespace := os.Args[2]
-	applyCmd := exec.Command("kubectl", "apply", "-f", file, "-o", "json")
+	applyCmd := exec.Command("kubectl", "apply", "-f", file, "-o", "json", "-n", jobNamespace)
 	applyBuf := new(bytes.Buffer)
 	applyCmd.Stdout = applyBuf
 	applyCmd.Stderr = os.Stderr
