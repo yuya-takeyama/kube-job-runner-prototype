@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -52,7 +53,7 @@ func main() {
 	}
 
 	log.Println("kubectl apply result:")
-	log.Println(applyBuf.String())
+	fmt.Println(applyBuf.String())
 	log.Println("---")
 
 	var ar applyResult
@@ -103,6 +104,11 @@ func getJobPods(namespace string, jobName string) (*podItems, error) {
 	if getPodErr != nil {
 		return nil, getPodErr
 	}
+
+	log.Println("kubectl get pods result:")
+	fmt.Println(getPodBuf.String())
+	log.Println("---")
+
 	var pjr podItems
 	pjErr := json.Unmarshal(getPodBuf.Bytes(), &pjr)
 	if pjErr != nil {
