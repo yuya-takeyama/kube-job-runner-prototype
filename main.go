@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"log"
 	"os"
 	"os/exec"
 )
@@ -44,10 +45,15 @@ func main() {
 	applyCmd := exec.Command("kubectl", "apply", "-f", file, "-o", "json")
 	applyBuf := new(bytes.Buffer)
 	applyCmd.Stdout = applyBuf
+	applyCmd.Stderr = os.Stderr
 	applyErr := applyCmd.Run()
 	if applyErr != nil {
 		panic(applyErr)
 	}
+
+	log.Println("kubectl apply result:")
+	log.Println(applyBuf.String())
+	log.Println("---")
 
 	var ar applyResult
 	jdErr := json.Unmarshal(applyBuf.Bytes(), &ar)
