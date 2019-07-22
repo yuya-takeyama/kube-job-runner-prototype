@@ -45,6 +45,7 @@ type podItems struct {
 
 func main() {
 	file := os.Args[1]
+	jobNamespace := os.Args[2]
 	applyCmd := exec.Command("kubectl", "apply", "-f", file, "-o", "json")
 	applyBuf := new(bytes.Buffer)
 	applyCmd.Stdout = applyBuf
@@ -65,7 +66,6 @@ func main() {
 	}
 
 	jobName := ar.Metadata.Name
-	jobNamespace := ar.Metadata.Namespace
 
 	var podName string
 
