@@ -3,13 +3,9 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"time"
-
-	"github.com/k0kubun/pp"
 )
 
 type applyResult struct {
@@ -56,10 +52,6 @@ func main() {
 		panic(applyErr)
 	}
 
-	log.Println("=== kubectl apply result:")
-	fmt.Println(applyBuf.String())
-	log.Println("---")
-
 	var ar applyResult
 	jdErr := json.Unmarshal(applyBuf.Bytes(), &ar)
 	if jdErr != nil {
@@ -76,17 +68,13 @@ func main() {
 			panic(getJobPodsErr)
 		}
 
-		log.Println("=== getJobPods() items:")
-		pp.Println(items)
-		log.Println("---")
-
 		if items.Items[0].Status.ContainerStatuses[0].State["waiting"] == nil {
 			podName = items.Items[0].Metadata.Name
 			break
 		}
 	}
 
-	logCmd := exec.Command("kubectl", "logs", "-n", jobNamespace, podName, "-f", "--timestamps")
+	logCmd := exec.Command("kubectl", "logs", "-n", jobNamespace, podName, "-f")
 	logCmd.Stdout = os.Stdout
 	logCmd.Stderr = os.Stderr
 	logErr := logCmd.Run()
@@ -104,7 +92,7 @@ func main() {
 }
 
 func getJobPods(namespace string, jobName string) (*podItems, error) {
-	time.Sleep(60 * time.Second)
+	time.Sleep(3 * time.Second)
 
 	getPodCmd := exec.Command("kubectl", "get", "pods", "-n", namespace, "--selector=job-name="+jobName, "-o", "json")
 	getPodBuf := new(bytes.Buffer)
@@ -113,10 +101,6 @@ func getJobPods(namespace string, jobName string) (*podItems, error) {
 	if getPodErr != nil {
 		return nil, getPodErr
 	}
-
-	log.Println("kubectl get pods result:")
-	fmt.Println(getPodBuf.String())
-	log.Println("---")
 
 	var pjr podItems
 	pjErr := json.Unmarshal(getPodBuf.Bytes(), &pjr)
